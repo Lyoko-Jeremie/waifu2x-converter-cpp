@@ -4,7 +4,7 @@
  *
  *  Created on: 2015/05/24
  *      Author: wlamigo
- * 
+ *
  *   (ここにファイルの説明を記入)
  */
 
@@ -17,8 +17,12 @@
 #include "picojson.h"
 #include "tclap/CmdLine.h"
 
+#include "TimeGuard.h"
+
 #include "modelHandler.hpp"
 #include "convertRoutine.hpp"
+
+TGuard::TimeGuard TG( true, true, "Time");
 
 int main(int argc, char** argv) {
 
@@ -72,6 +76,12 @@ int main(int argc, char** argv) {
 
 	// load image file
 	cv::Mat image = cv::imread(cmdInputFile.getValue(), cv::IMREAD_COLOR);
+	if (image.empty())
+	{
+		std::cerr << "Error : Cannot Read File." << std::endl;
+		std::exit(-1);
+	}
+	TG.Start( cmdInputFile.getValue() );
 	image.convertTo(image, CV_32F, 1.0 / 255.0);
 	cv::cvtColor(image, image, cv::COLOR_RGB2YUV);
 
@@ -93,10 +103,13 @@ int main(int argc, char** argv) {
 		cv::split(image, imageSplit);
 		imageSplit[0].copyTo(imageY);
 
+        TGuard::TimerFunction::ttype BeginTime = TGuard::TimerFunction::getNowTime();
 		w2xc::convertWithModels(imageY, imageSplit[0], models);
+        TGuard::TimerFunction::ttype SpendTime = TGuard::TimerFunction::getNowTime() - BeginTime;
+        std::cout << "noise spend time :" << TGuard::TimerFunction::FormatTime(SpendTime) << std::endl << std::endl;
 
 		cv::merge(imageSplit, image);
-		
+
 	} // noise reduction phase : end
 
 	// ===== scaling phase =====
@@ -145,11 +158,14 @@ int main(int argc, char** argv) {
 			cv::resize(image,image2xBicubic,imageSize,0,0,cv::INTER_CUBIC);
 			cv::split(image2xBicubic, imageSplit);
 
+            TGuard::TimerFunction::ttype BeginTime = TGuard::TimerFunction::getNowTime();
 			if(!w2xc::convertWithModels(imageY, imageSplit[0], models)){
 				std::cerr << "w2xc::convertWithModels : something error has occured.\n"
 						"stop." << std::endl;
 				std::exit(1);
 			};
+			TGuard::TimerFunction::ttype SpendTime = TGuard::TimerFunction::getNowTime() - BeginTime;
+            std::cout << "scale spend time :" << TGuard::TimerFunction::FormatTime(SpendTime) << std::endl << std::endl;
 
 			cv::merge(imageSplit, image);
 
@@ -189,6 +205,7 @@ int main(int argc, char** argv) {
 	}
 	cv::imwrite(outputFileName, image);
 
+    TG.Stop();
 	std::cout << "process successfully done!" << std::endl;
 
 	return 0;

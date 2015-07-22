@@ -4,7 +4,7 @@
  *
  *  Created on: 2015/05/24
  *      Author: wlamigo
- * 
+ *
  *   (ここにファイルの説明を記入)
  */
 

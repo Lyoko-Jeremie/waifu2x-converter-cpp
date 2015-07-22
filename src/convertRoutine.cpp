@@ -4,11 +4,12 @@
  *
  *  Created on: 2015/05/31
  *      Author: wlamigo
- * 
+ *
  *   (ここにファイルの説明を記入)
  */
 
 #include "convertRoutine.hpp"
+#include "TimeGuard.h"
 
 namespace w2xc {
 
@@ -64,7 +65,7 @@ static bool convertWithModelsBasic(cv::Mat &inputPlane, cv::Mat &outputPlane,
 	inputPlanes->push_back(inputPlane);
 
 	for (int index = 0; index < models.size(); index++) {
-		std::cout << "Iteration #" << (index + 1) << "..." << std::endl;
+		std::cout << "Iteration #" << (index + 1) << " of " << models.size() << " ..." << std::endl;
 		if (!models[index]->filter(*inputPlanes, *outputPlanes)) {
 			std::exit(-1);
 		}
@@ -111,6 +112,9 @@ static bool convertWithModelsBlockSplit(cv::Mat &inputPlane,
 	cv::Mat writeMatTo;
 	cv::Mat writeMatFrom;
 	outputPlane = cv::Mat::zeros(outputSize, CV_32FC1);
+
+    TGuard::TimerFunction::ttype BeginTime = TGuard::TimerFunction::getNowTime();
+
 	for (unsigned int r = 0; r < splitRows; r++) {
 		if (r == splitRows - 1) {
 			processRow = tempMat.rowRange(r * (blockSize.height - 2 * nModel),
@@ -130,8 +134,9 @@ static bool convertWithModelsBlockSplit(cv::Mat &inputPlane,
 						c * (blockSize.width - 2 * nModel) + blockSize.width);
 			}
 
-			std::cout << "start process block (" << c << "," << r << ") ..."
+			std::cout << "start process block (" << c << "," << r << ") of (" << splitColumns << "," << splitRows << ") ..."
 					<< std::endl;
+            TGuard::TimerFunction::ttype BeginTimeBlock = TGuard::TimerFunction::getNowTime();
 			if (!convertWithModelsBasic(processBlock, processBlockOutput,
 					models)) {
 				std::cerr << "w2xc::convertWithModelsBasic()\n"
@@ -139,6 +144,13 @@ static bool convertWithModelsBlockSplit(cv::Mat &inputPlane,
 						"something error has occured. stop." << std::endl;
 				return false;
 			}
+			TGuard::TimerFunction::ttype NowTime = TGuard::TimerFunction::getNowTime();
+			TGuard::TimerFunction::ttype SpendTime = NowTime - BeginTime;
+			int EndBlocks = (r * splitColumns + c) +1;
+			int LeftBlocks = splitColumns * splitRows - EndBlocks;
+			std::cout << "This block spend time :" << TGuard::TimerFunction::FormatTime( NowTime - BeginTimeBlock ) << std::endl;
+			std::cout << "Has been time-consuming :\n" << TGuard::TimerFunction::FormatTime(SpendTime) << std::endl;
+			std::cout << "left <" << LeftBlocks << "> blocks, It is expected to take :\n" << TGuard::TimerFunction::FormatTime( ( SpendTime / EndBlocks ) * LeftBlocks ) << "\n" << std::endl;
 
 			writeMatFrom = processBlockOutput(
 					cv::Range(nModel,

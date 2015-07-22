@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="waifu2x-converter-cpp" />
+		<Option pch_mode="2" />
+		<Option compiler="gnu_gcc_compiler_x64_492_posix_seh" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/waifu2x-converter-cpp" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gnu_gcc_compiler_x64_492_posix_seh" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/waifu2x-converter-cpp" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gnu_gcc_compiler_x64_492_posix_seh" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add directory="opencv-install/include" />
+			<Add directory="include" />
+		</Compiler>
+		<Linker>
+			<Add library="opencv-install\x64\mingw\lib\libopencv_core300.dll.a" />
+			<Add library="opencv-install\x64\mingw\lib\libopencv_features2d300.dll.a" />
+			<Add library="opencv-install\x64\mingw\lib\libopencv_imgcodecs300.dll.a" />
+			<Add library="opencv-install\x64\mingw\lib\libopencv_imgproc300.dll.a" />
+			<Add directory="opencv-install/x64/mingw/lib" />
+		</Linker>
+		<Unit filename="include/TimeGuard.h" />
+		<Unit filename="include/picojson.h" />
+		<Unit filename="include/tclap/Arg.h" />
+		<Unit filename="include/tclap/ArgException.h" />
+		<Unit filename="include/tclap/ArgTraits.h" />
+		<Unit filename="include/tclap/CmdLine.h" />
+		<Unit filename="include/tclap/CmdLineInterface.h" />
+		<Unit filename="include/tclap/CmdLineOutput.h" />
+		<Unit filename="include/tclap/Constraint.h" />
+		<Unit filename="include/tclap/DocBookOutput.h" />
+		<Unit filename="include/tclap/HelpVisitor.h" />
+		<Unit filename="include/tclap/IgnoreRestVisitor.h" />
+		<Unit filename="include/tclap/MultiArg.h" />
+		<Unit filename="include/tclap/MultiSwitchArg.h" />
+		<Unit filename="include/tclap/OptionalUnlabeledTracker.h" />
+		<Unit filename="include/tclap/StandardTraits.h" />
+		<Unit filename="include/tclap/StdOutput.h" />
+		<Unit filename="include/tclap/SwitchArg.h" />
+		<Unit filename="include/tclap/UnlabeledMultiArg.h" />
+		<Unit filename="include/tclap/UnlabeledValueArg.h" />
+		<Unit filename="include/tclap/ValueArg.h" />
+		<Unit filename="include/tclap/ValuesConstraint.h" />
+		<Unit filename="include/tclap/VersionVisitor.h" />
+		<Unit filename="include/tclap/Visitor.h" />
+		<Unit filename="include/tclap/XorHandler.h" />
+		<Unit filename="include/tclap/ZshCompletionOutput.h" />
+		<Unit filename="src/convertRoutine.cpp" />
+		<Unit filename="src/convertRoutine.hpp" />
+		<Unit filename="src/main.cpp" />
+		<Unit filename="src/modelHandler.cpp" />
+		<Unit filename="src/modelHandler.hpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
